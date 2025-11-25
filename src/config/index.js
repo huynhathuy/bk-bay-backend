@@ -1,11 +1,12 @@
 require('dotenv').config({ quiet: true });
-
-const express = require('express');
+// load environment
+const express = require('express'); // use express framework
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const pool = require('./database');
+const pool = require('./database'); // database connection
 
 const userRoutes = require('../routes/userRoutes');
+const productRoutes = require('../routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 //404 Handler
 app.use((req, res) => {
