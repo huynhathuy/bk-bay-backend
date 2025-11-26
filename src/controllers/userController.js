@@ -20,6 +20,7 @@ const getCurrentUser = async (req, res) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decoded.id;
             const user = await userModel.getUserById(userId);
+            const phoneNumber = await userModel.getUserPhoneNumber(userId);
             if (!user) {
                 return res.status(404).json({ 
                     success: false,
@@ -30,6 +31,7 @@ const getCurrentUser = async (req, res) => {
             res.status(200).json({
                 success: true,
                 user: sanitizedUser,
+                phoneNumber: phoneNumber,
                 userRole: decoded.role
             });
         } catch (error) {

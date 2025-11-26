@@ -50,6 +50,13 @@ async function checkRole(userId) {
     return result.recordset[0]?.Role || 'unknown';
 }
 
+const getUserPhoneNumber = async (userId) => {
+    const request = pool.request();
+    request.input('userId', userId);
+    const result = await request.query('SELECT PhoneNumber FROM UserPhoneNumber WHERE UserId = @userId');
+    return result.recordset[0]?.PhoneNumber || null;
+}
+
 const createUser = async (user) => {
     // 1. Create a transaction using the existing pool
     const transaction = new sql.Transaction(pool);
@@ -160,6 +167,7 @@ module.exports = {
     getUserByUsername,
     getUserById,
     comparePassword,
+    getUserPhoneNumber,
     checkRole,
     createUser
 };

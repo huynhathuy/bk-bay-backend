@@ -6,9 +6,11 @@ const cookieParser = require('cookie-parser');
 const pool = require('./database'); // database connection
 
 const userRoutes = require('../routes/userRoutes');
+const cartRoutes = require('../routes/cartRoutes');
 const reviewRoutes = require('../routes/reviewRoutes');
 const productRoutes = require('../routes/productRoutes');
 const sellerProductsRoutes = require('../routes/sellerProductsRoutes')
+const uploadRoutes = require('../routes/uploadRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,9 +30,11 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sellers', sellerProductsRoutes)
+app.use('/api/upload', uploadRoutes);
 
 //404 Handler
 app.use((req, res) => {
