@@ -250,6 +250,8 @@ async function getPurchasedItemsForReview(userId) {
     const mapRecord = (item) => ({
         orderId: item.OrderID,
         orderItemId: item.Order_ItemID,
+        // [FIX] Thêm dòng này để map ProductID trả về cho Frontend
+        productId: item.BarCode || item.ProductID, 
         productName: item.ProductName,
         variationName: item.VariationName,
         price: item.Price,
@@ -264,13 +266,16 @@ async function getPurchasedItemsForReview(userId) {
         return (result.recordset || []).map(mapRecord);
     } catch (err) {
         if (err.message.includes('Could not find stored procedure')) {
-            console.warn('[Review.model.getPurchasedItemsForReview] WARN: Stored procedure usp_GetPurchasedItemsForReview not found. Using fallback query.');
+            console.warn('[Review.model] Using fallback query.');
             const fallbackReq = pool.request();
             fallbackReq.input('UserID', sql.VarChar, userId);
+            
+            // [FIX] Đã thêm p.Bar_code vào câu SELECT bên dưới
             const query = `
                 SELECT 
                     o.ID AS OrderID,
                     oi.ID AS Order_ItemID,
+                    p.Bar_code AS BarCode, -- <--- QUAN TRỌNG: Phải lấy cột này!
                     p.Name AS ProductName,
                     v.NAME AS VariationName,
                     oi.Price,
@@ -289,11 +294,9 @@ async function getPurchasedItemsForReview(userId) {
             const result = await fallbackReq.query(query);
             return (result.recordset || []).map(mapRecord);
         }
-        // For other errors, re-throw
         throw err;
     }
 }
-
 /**
  * Get a simplified list of all products for UI selectors.
  * Executes stored procedure `usp_GetAllProductsSimple`.
