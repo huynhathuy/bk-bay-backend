@@ -145,3 +145,11 @@ SellerID trùng với UserID (Tự review hàng mình). => Backend cần try-cat
 
 4. trg_Review_MaintainProductAggregates (Trigger)
 Trigger nằm trên bảng Review. Tự động update AvgRating và ReviewCount bên bảng Product mỗi khi có review thêm/xóa/sửa. Backend không cần làm gì thêm.
+
+---
+## 3. Ghi chú và các vấn đề đã biết
+
+### Vấn đề điều hướng sau khi viết review
+- **Mô tả:** Tại trang `WriteReview`, sau khi người dùng gửi đánh giá thành công, ứng dụng đã điều hướng tới một URL không hợp lệ (`/product//reviews`) do thiếu ID sản phẩm.
+- **Giả thuyết:** Có khả năng `usp_GetPurchasedItemsForReview` đã trả về đầy đủ thông tin cần thiết, bao gồm cả mã `barcode` của sản phẩm trong `OrderItem`. Tuy nhiên, kết quả trả về từ API có thể đã không chứa một trường tường minh là `productId` hoặc `barcode`, khiến cho tầng frontend không thể map và lấy được giá trị này để điều hướng.
+- **Hành động:** Backend dev cần rà soát lại output của `usp_GetPurchasedItemsForReview` và đảm bảo rằng `barcode` (hoặc một định danh sản phẩm tương đương) được trả về trong mỗi object của danh sách sản phẩm chờ đánh giá.
